@@ -70,7 +70,7 @@ io.on('connection', socket => {
         
         socket.on('disconnect', () => {
             users.splice(users.indexOf(userID), 1);
-            socket.to(roomID).broadcast.emit('user-disconnected', userID)
+            io.in(roomID).emit('user-disconnected', userID);
             console.log(userID+" left room: "+roomID);
             
             if(users.length == 0)chat.id = "";
