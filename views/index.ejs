@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="icon" type="image/png" href="/icon.png">
+    <link rel="stylesheet" href="/index.css">
+
+    <title>Video Chat</title>
+
+    <script>
+        var id = "<%= id %>";
+
+        function openPage(pageName) {
+            var createTab = document.getElementById("createTab");
+            var joinTab = document.getElementById("joinTab");
+
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            
+            document.getElementById(pageName).style.display = "block";
+            
+            if(pageName == 'CreateRoom'){
+                joinTab.style.backgroundColor = '#333';
+                createTab.style.backgroundColor = '#555';
+            } 
+            else if(pageName == 'JoinRoom'){
+                createTab.style.backgroundColor = '#333';
+                joinTab.style.backgroundColor = '#555';
+            } 
+        }
+        //Default page
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById("joinTab").click();
+            roomID = document.getElementById("roomId").value = id;
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to Video Chat!</h1>
+
+    <button id="createTab" class="tablink" onclick="openPage('CreateRoom')">Create Room</button>
+    <button id="joinTab" class="tablink" onclick="openPage('JoinRoom')">Join Room</button>
+
+    <div id="CreateRoom" class="tabcontent">
+        <form action="/room" method="POST">
+            <div class="container">
+                <label for="userName">Name:</label><br>
+                <input type="text" id="userName" name="userName" required><br><br>
+
+                <input type="submit" value="Create Room" class="bg-red">
+            </div>
+
+        </form>
+    </div>
+    
+    <div id="JoinRoom" class="tabcontent">
+        <form action="/room" method="POST">
+            <div class="container">
+                <label for="userName">Name:</label><br>
+                <input type="text" id="userName" name="userName" required><br><br>
+            
+                <label for="roomId">Room ID:</label><br>
+                <input type="text" id="roomId" name="roomId" required><br><br>
+
+                <input type="submit" value="Join Room" class="bg-green">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
