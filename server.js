@@ -7,7 +7,7 @@ const io = require("socket.io")(server);
 const { v4: uuidV4 } = require('uuid')
 
 const { PeerServer } = require('peer');
-const peerServer = PeerServer({ port: 9000, path: '/peer' });
+const peerServer = PeerServer({ port: 443, path: '/peer' });
 
 //APP
 app.set('view engine', 'ejs');
