@@ -2,9 +2,8 @@
 const socket = io('/');
 const peer = new Peer(undefined, {
     secure: true, 
-    host: 'https://video-chat-v1.herokuapp.com/',
+    host: '/',
     port: 443,
-    path:'/peer'
 });
 
 const peers = {}
