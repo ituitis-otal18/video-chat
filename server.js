@@ -7,7 +7,7 @@ const io = require("socket.io")(server);
 const { v4: uuidV4 } = require('uuid')
 
 const { PeerServer } = require('peer');
-//const peerServer = PeerServer({ port: 443, path: '/peer' });
+const peerServer = PeerServer({ port: 443, path: '/peerjs' });
 
 //APP
 app.set('view engine', 'ejs');
@@ -41,12 +41,6 @@ app.get('/room/:id/:name', (req, res) => {
         name: req.params.name
     });
 })
-
-//peer->
-const peerServer = PeerServer(server, {
-    path: '/peer'
-});
-app.use('/peerjs', peerServer);
 
 server.listen(port);
 
