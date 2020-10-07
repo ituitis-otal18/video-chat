@@ -6,8 +6,10 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const { v4: uuidV4 } = require('uuid')
 
-const { PeerServer } = require('peer');
-const peerServer = PeerServer({ port: 443, path: '/peerjs' });
+//Peer
+var PeerServer = require('peer').ExpressPeerServer;
+//const peerServer = PeerServer({ port: 443, path: '/peerjs' });
+app.use('/peerjs', PeerServer(server, {debug: true}));
 
 //APP
 app.set('view engine', 'ejs');
