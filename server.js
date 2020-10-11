@@ -63,8 +63,10 @@ class Chat {
 
 //Socket
 io.on('connection', socket => {
-    //New user
-    socket.on('join', (roomID, userID) => {
+    let roomID;
+    //Connect
+    socket.on('join', (id, userID) => {
+        roomID = id;
         let chat = null;
         roomChats.forEach(c => {chat = c.check(roomID)});
         if(!chat){
@@ -80,23 +82,23 @@ io.on('connection', socket => {
 
         socket.to(roomID).broadcast.emit('user-joined', userID);
         console.log(userID+" joined room: "+roomID);
-        
-        //Disconnect
-        socket.on('disconnect', () => {
-            users.splice(users.indexOf(userID), 1);
-            socket.to(roomID).broadcast.emit('user-left', userID);
-            socket.to(roomID).broadcast.emit('all-users', users);
-            console.log(userID+" left room: "+roomID);
-            
-            //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
-        })
+    })
 
-        //New message
-        socket.on('new-message', (msg) => {
-            chat.log.push(msg);
-            if(chat.log.length > chat.limit) chat.log.splice(0, 1);
-            io.in(roomID).emit('chat-update', chat.log);
-        })
+    //Disconnect
+    socket.on('disconnect', () => {
+        users.splice(users.indexOf(userID), 1);
+        socket.to(roomID).broadcast.emit('user-left', userID);
+        socket.to(roomID).broadcast.emit('all-users', users);
+        console.log(userID+" left room: "+roomID);
+        
+        //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
+    })
+
+    //New message
+    socket.on('new-message', (msg) => {
+        chat.log.push(msg);
+        if(chat.log.length > chat.limit) chat.log.splice(0, 1);
+        io.in(roomID).emit('chat-update', chat.log);
     })
 
 })
