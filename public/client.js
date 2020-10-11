@@ -101,7 +101,7 @@ function addVideoStream(video, stream){
 //Chat
 let msgElement = document.getElementById("message");
 msgElement.addEventListener("keydown", function(event) {
-  if (event.code === 13) {
+  if (event.key === 'Enter') {
     event.preventDefault();
     document.getElementById("send").click();
   }
