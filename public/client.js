@@ -34,6 +34,7 @@ socket.on('user-left', userID => {
     if (peers[userID]){
         peers[userID].close();
         peers[userID] = null;
+        console.log("user left: "+userID);
     } 
 })
 
@@ -56,10 +57,6 @@ navigator.getUserMedia(
             })
             call.on('close', () => {
                 video.remove();
-                console.log("user left: "+userID);
-            })
-            peer.on('disconnected', () => {
-                call.close();
             })
         })
 
@@ -80,7 +77,6 @@ function connectToUser(userID, stream){
     })
     call.on('close', () => {
         video.remove();
-        console.log("user left: "+userID);
     })
     peers[userID] = call;
 }
