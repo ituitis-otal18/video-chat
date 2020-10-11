@@ -84,8 +84,8 @@ io.on('connection', socket => {
         //Disconnect
         socket.on('disconnect', () => {
             users.splice(users.indexOf(userID), 1);
-            io.in(roomID).emit('user-left', userID);
-            io.in(roomID).emit('all-users', users);
+            socket.to(roomID).broadcast.emit('user-left', userID);
+            socket.to(roomID).broadcast.emit('all-users', users);
             console.log(userID+" left room: "+roomID);
             
             //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
