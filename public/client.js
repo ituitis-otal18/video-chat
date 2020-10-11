@@ -16,7 +16,7 @@ const peer = new Peer(undefined, {
 });
 
 
-const peers = {}
+const peers = [];
 let allUsers = [];
 
 //Socket
@@ -31,11 +31,9 @@ socket.on('all-users', users => {
 })
 
 socket.on('user-left', userID => {
-    if (peers[userID]){
-        peers[userID].close();
-        peers[userID] = null;
-        console.log("user left: "+userID);
-    } 
+    peers[userID].close();
+    peers[userID] = null;
+    console.log("user left: "+userID);
 })
 
 //Create own Video
