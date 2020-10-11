@@ -63,10 +63,11 @@ class Chat {
 
 //Socket
 io.on('connection', socket => {
-    let roomID;
+    let roomID, userID;
     //Connect
-    socket.on('join', (id, userID) => {
-        roomID = id;
+    socket.on('join', (room, user) => {
+        roomID = room;
+        userID = user;
         let chat = null;
         roomChats.forEach(c => {chat = c.check(roomID)});
         if(!chat){
