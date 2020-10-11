@@ -6,6 +6,10 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server, {'pingInterval': 1000, 'pingTimeout': 2000});
 const { v4: uuidV4 } = require('uuid')
 
+let userNames = [];
+let userIDs = [];
+let roomChats = [];
+
 //Peer Server
 var PeerServer = require('peer').ExpressPeerServer;
 app.use('/peerjs', PeerServer(server));
@@ -37,6 +41,7 @@ app.post('/room', (req, res) => {
 
 //connect to room
 app.get('/room/:id/:name', (req, res) => {
+    userNames.push(req.params.name);
     res.render('room', { 
         id: req.params.id,
         name: req.params.name
@@ -45,9 +50,6 @@ app.get('/room/:id/:name', (req, res) => {
 
 server.listen(port);
 
-
-let users = [];
-let roomChats = [];
 
 class Chat {
     constructor(id) {
@@ -71,11 +73,10 @@ io.on('connection', socket => {
             chat = new Chat(roomID); 
             roomChats.push(chat);
         } 
-
-        users.push(userID);
+        userIDs.push(userID);
         socket.join(roomID);
        
-        io.in(roomID).emit('all-users', users);
+        io.in(roomID).emit('all-users', userNames);
         io.in(roomID).emit('chat-update', chat.log);
 
         socket.to(roomID).broadcast.emit('user-joined', userID);
@@ -83,11 +84,13 @@ io.on('connection', socket => {
         
         //Disconnect
         socket.on('disconnect', () => {
-            users.splice(users.indexOf(userID), 1);
+            userNames.splice(userIDs.indexOf(userID), 1);
+            userIDs.splice(userIDs.indexOf(userID), 1);
+
             io.in(roomID).emit('user-left', userID);
-            io.in(roomID).emit('all-users', users);
+            io.in(roomID).emit('all-users', userNames);
+
             console.log(userID+" left room: "+roomID);
-            
             //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
         })
 
