@@ -58,7 +58,7 @@ navigator.getUserMedia(
                 video.remove();
                 console.log("user left: "+userID);
             })
-            peer.on('close', () => {
+            peer.on('disconnected', () => {
                 call.close();
             })
         })
