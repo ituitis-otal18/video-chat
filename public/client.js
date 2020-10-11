@@ -1,11 +1,20 @@
 //Socket
+/*
 const socket = io('/');
+const peer = new Peer(undefined, {
+    host: 'localhost',
+    path: '/peerjs',
+    port: 3000
+});
+*/
+
 const peer = new Peer(undefined, {
     secure: true, 
     host: 'video-chat-v1.herokuapp.com',
     path: '/peerjs',
     port: 443
 });
+
 
 const peers = {}
 let allUsers = [];
@@ -81,8 +90,10 @@ function addVideoStream(video, stream){
 
 //Chat
 function sendMessage(){
-    let msg = userName + ": " + document.getElementById("message").value;
-    socket.emit('new-message', roomID, msg);
+    let msgElement = document.getElementById("message");
+    let msg = userName + ": " + msgElement.value;
+    msgElement.value = "";
+    socket.emit('new-message', msg);
 }
 
 socket.on('chat-update', chat => {

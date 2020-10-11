@@ -6,9 +6,8 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const { v4: uuidV4 } = require('uuid')
 
-//Peer
+//Peer Server
 var PeerServer = require('peer').ExpressPeerServer;
-//const peerServer = PeerServer({ port: 443, path: '/peerjs' });
 app.use('/peerjs', PeerServer(server, {debug: true}));
 
 //APP
@@ -48,16 +47,30 @@ server.listen(port);
 
 
 let users = [];
-let chat = {
-    id: "",
-    log: []
-};
+let roomChats = [];
+
+class Chat {
+    constructor(id) {
+        this.id = id;
+        this.log = [["Welcome to the chat!"]];
+        this.limit = 20;
+    }
+    check(id){
+        if(this.id == id) return this;
+        else return null;
+    }
+}
 
 //Socket
 io.on('connection', socket => {
-
+    //New user
     socket.on('join', (roomID, userID) => {
-        chat.id = roomID;
+        let chat = null;
+        roomChats.forEach(c => {chat = c.check(roomID)});
+        if(!chat){
+            chat = new Chat(roomID); 
+            roomChats.push(chat);
+        } 
 
         users.push(userID);
         socket.join(roomID);
@@ -68,16 +81,19 @@ io.on('connection', socket => {
         socket.to(roomID).broadcast.emit('user-joined', userID);
         console.log(userID+" joined room: "+roomID);
         
+        //Disconnect
         socket.on('disconnect', () => {
             users.splice(users.indexOf(userID), 1);
             io.in(roomID).emit('user-disconnected', userID);
             console.log(userID+" left room: "+roomID);
             
-            if(users.length == 0)chat.id = "";
+            //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
         })
 
-        socket.on('new-message', (id, msg) => {
-            if(id == chat.id) chat.log.push(msg);
+        //New message
+        socket.on('new-message', (msg) => {
+            chat.log.push(msg);
+            if(chat.log.length > chat.limit) chat.log.splice(0, 1);
             io.in(roomID).emit('chat-update', chat.log);
         })
     })
