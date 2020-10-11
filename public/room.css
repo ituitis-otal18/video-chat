@@ -74,7 +74,7 @@ button{
     background-color: green;
 }
 
-.sticky{
+#sidebar{
     display: block;
     height: 100%;
     background-color: dodgerblue;
@@ -87,7 +87,7 @@ button{
 }
 
 @media only screen and (max-width: 800px) {
-    .sticky {
+    #sidebar {
       display: none;
     }
 }

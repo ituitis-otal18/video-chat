@@ -1,5 +1,3 @@
-//Socket
-const socket = io('/');
 /*
 const peer = new Peer(undefined, {
     host: 'localhost',
@@ -15,11 +13,12 @@ const peer = new Peer(undefined, {
     port: 443
 });
 
-
-const peers = [];
+const peers = {};
 let allUsers = [];
 
 //Socket
+const socket = io('/');
+
 socket.on('connect', () => {
     peer.on('open', id => {
         socket.emit('join', roomID, id);
@@ -31,9 +30,11 @@ socket.on('all-users', users => {
 })
 
 socket.on('user-left', userID => {
-    peers[userID].close();
-    peers[userID] = null;
-    console.log("user left: "+userID);
+    if(peers[userID]){
+        peers[userID].close();
+        peers[userID] = null;
+        console.log("user left: "+userID);
+    }
 })
 
 //Create own Video
