@@ -27,6 +27,17 @@ socket.on('connect', () => {
 
 socket.on('all-users', users => {
     allUsers = users;
+
+    let area = document.getElementById("sidebar");
+    area.innerHTML = "";
+    let br = document.createElement("br");
+
+    allUsers.forEach(user => {
+        let p = document.createElement("p");
+        p.innerHTML = user;
+        area.append(p);
+        area.append(br);
+    });
 })
 
 socket.on('user-left', userID => {
