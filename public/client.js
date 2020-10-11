@@ -56,13 +56,13 @@ navigator.getUserMedia(
             })
             call.on('close', () => {
                 video.remove();
+                console.log("user left: "+userID);
             })
         })
 
         //Send video stream
         socket.on('user-joined', (userID) => {
             connectToUser(userID, stream);
-            console.log("user joined: "+userID);
         })
     },
     error => { console.warn(error.message) }
@@ -77,6 +77,7 @@ function connectToUser(userID, stream){
     })
     call.on('close', () => {
         video.remove();
+        console.log("user left: "+userID);
     })
     peers[userID] = call;
 }
@@ -108,7 +109,6 @@ socket.on('chat-update', chat => {
         area.append(p);
         area.append(br);
     });
-    console.log(chat);
 })
 
 //Share URL
