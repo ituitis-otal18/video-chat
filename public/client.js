@@ -28,7 +28,7 @@ socket.on('connect', () => {
 socket.on('all-users', users => {
     allUsers = users;
 
-    let area = document.getElementById("sidebar");
+    let area = document.getElementById("users");
     area.innerHTML = "";
     let br = document.createElement("br");
 
