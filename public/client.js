@@ -1,6 +1,6 @@
 //Socket
-/*
 const socket = io('/');
+/*
 const peer = new Peer(undefined, {
     host: 'localhost',
     path: '/peerjs',
