@@ -21,7 +21,7 @@ const socket = io('/');
 
 socket.on('connect', () => {
     peer.on('open', id => {
-        socket.emit('join', roomID, id);
+        socket.emit('join', roomID, id, userName);
     })
 });
 
@@ -34,7 +34,7 @@ socket.on('all-users', users => {
 
     allUsers.forEach(user => {
         let p = document.createElement("p");
-        p.innerHTML = user;
+        p.innerHTML = user.name;
         area.append(p);
         area.append(br);
     });

@@ -6,10 +6,6 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server, {'pingInterval': 1000, 'pingTimeout': 2000});
 const { v4: uuidV4 } = require('uuid')
 
-let userNames = [];
-let userIDs = [];
-let roomChats = [];
-
 //Peer Server
 var PeerServer = require('peer').ExpressPeerServer;
 app.use('/peerjs', PeerServer(server));
@@ -41,7 +37,6 @@ app.post('/room', (req, res) => {
 
 //connect to room
 app.get('/room/:id/:name', (req, res) => {
-    userNames.push(req.params.name);
     res.render('room', { 
         id: req.params.id,
         name: req.params.name
@@ -50,6 +45,8 @@ app.get('/room/:id/:name', (req, res) => {
 
 server.listen(port);
 
+let users = [];
+let chats = {};
 
 class Chat {
     constructor(id) {
@@ -63,20 +60,28 @@ class Chat {
     }
 }
 
+class User {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
 //Socket
 io.on('connection', socket => {
     //New user
-    socket.on('join', (roomID, userID) => {
+    socket.on('join', (roomID, userID, userName) => {
+        users.push(new User(userID, userName));
+
         let chat = null;
-        roomChats.forEach(c => {chat = c.check(roomID)});
-        if(!chat){
-            chat = new Chat(roomID); 
-            roomChats.push(chat);
-        } 
-        userIDs.push(userID);
+        if(chats[roomID]) chat = chats[roomID];
+        else {
+            chat = new Chat(roomID);
+            chats[roomID] = chat;
+        }
+        
         socket.join(roomID);
-       
-        io.in(roomID).emit('all-users', userNames);
+        io.in(roomID).emit('all-users', users);
         io.in(roomID).emit('chat-update', chat.log);
 
         socket.to(roomID).broadcast.emit('user-joined', userID);
@@ -84,11 +89,10 @@ io.on('connection', socket => {
         
         //Disconnect
         socket.on('disconnect', () => {
-            userNames.splice(userIDs.indexOf(userID), 1);
-            userIDs.splice(userIDs.indexOf(userID), 1);
+            users = users.filter(user => user.id != userID);
 
             io.in(roomID).emit('user-left', userID);
-            io.in(roomID).emit('all-users', userNames);
+            io.in(roomID).emit('all-users', users);
 
             console.log(userID+" left room: "+roomID);
             //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);
@@ -99,6 +103,7 @@ io.on('connection', socket => {
             chat.log.push(msg);
             if(chat.log.length > chat.limit) chat.log.splice(0, 1);
             io.in(roomID).emit('chat-update', chat.log);
+            chats[roomID] = chat;
         })
     })
 
