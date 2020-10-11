@@ -99,8 +99,15 @@ function addVideoStream(video, stream){
 }
 
 //Chat
+let msgElement = document.getElementById("message");
+msgElement.addEventListener("keydown", function(event) {
+  if (event.code === 13) {
+    event.preventDefault();
+    document.getElementById("send").click();
+  }
+});
+
 function sendMessage(){
-    let msgElement = document.getElementById("message");
     let msg = userName + ": " + msgElement.value;
     msgElement.value = "";
     socket.emit('new-message', msg);
