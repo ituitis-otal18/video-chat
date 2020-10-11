@@ -10,6 +10,10 @@ body,html {
     color: white;
 }
 
+h1{
+    color: dodgerblue;
+}
+
 form{
     display: flex;
     justify-content: center;
@@ -24,7 +28,7 @@ form{
 input[type=text] {
     border-radius: 5px;
     font-size: 18px;
-    width: 25%;
+    width: 50%;
     padding: 14px 16px;
     color: black;
     cursor: text;
@@ -33,7 +37,7 @@ input[type=text] {
 input[type=submit] {
     border-radius: 25px;
     font-size: 17px;
-    width: 20%;
+    width: 40%;
     padding: 14px 16px;
     color: white;
     cursor: pointer;

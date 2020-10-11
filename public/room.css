@@ -18,7 +18,6 @@ body {
     margin: 10px;
 }
 
-
 #myName {
     color: red;
 }
@@ -43,6 +42,7 @@ video {
 #chat{
     padding: 10px 10px;
     text-align: left;
+    font-weight: bold;
     background-color: white;
     border-radius: 10px;
 }
@@ -72,4 +72,22 @@ button{
 
 .bg-green {
     background-color: green;
+}
+
+.sticky{
+    display: block;
+    height: 100%;
+    background-color: dodgerblue;
+    padding: 0px 50px;
+    font-size: 20px;
+    position: -webkit-sticky;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+@media only screen and (max-width: 800px) {
+    .sticky {
+      display: none;
+    }
 }

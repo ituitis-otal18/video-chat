@@ -8,7 +8,7 @@ const { v4: uuidV4 } = require('uuid')
 
 //Peer Server
 var PeerServer = require('peer').ExpressPeerServer;
-app.use('/peerjs', PeerServer(server, {debug: true}));
+app.use('/peerjs', PeerServer(server));
 
 //APP
 app.set('view engine', 'ejs');
@@ -84,7 +84,8 @@ io.on('connection', socket => {
         //Disconnect
         socket.on('disconnect', () => {
             users.splice(users.indexOf(userID), 1);
-            io.in(roomID).emit('user-disconnected', userID);
+            io.in(roomID).emit('user-left', userID);
+            io.in(roomID).emit('all-users', users);
             console.log(userID+" left room: "+roomID);
             
             //if(users.length == 0) roomChats.splice(roomChats.indexOf(roomID), 1);

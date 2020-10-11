@@ -1,55 +1,23 @@
 //Socket
 const socket = io('/');
-/*
+
 const peer = new Peer(undefined, {
     host: 'localhost',
     path: '/peerjs',
     port: 3000
 });
-*/
 
+/*
 const peer = new Peer(undefined, {
     secure: true, 
     host: 'video-chat-v1.herokuapp.com',
     path: '/peerjs',
     port: 443
 });
-
+*/
 
 const peers = {}
 let allUsers = [];
-let otherUsers = [];
-
-//Create own Video
-const videoGrid = document.getElementById("video-grid");
-const myVideo = document.getElementById("myVideo");
-myVideo.muted = true;
-
-navigator.getUserMedia(
-    { video: true, audio: true },
-    stream => { 
-        addVideoStream(myVideo, stream);
-
-        peer.on('call', call => {
-            call.answer(stream)
-
-            //Send video stream
-            const video = document.createElement('video')
-            call.on('stream', userVideoStream => {
-                addVideoStream(video, userVideoStream)
-            })
-            call.on('close', () => {
-                video.remove();
-            })
-        })
-
-        socket.on('user-joined', (userID) => {
-            otherUsers.push(userID);
-            connectToUser(userID, stream);
-        })
-    },
-    error => { console.warn(error.message) }
-);
 
 //Socket
 socket.on('connect', () => {
@@ -62,14 +30,47 @@ socket.on('all-users', users => {
     allUsers = users;
 })
 
-socket.on('user-disconnected', userID => {
-    if (peers[userID]) peers[userID].close();
+socket.on('user-left', userID => {
+    if (peers[userID]){
+        peers[userID].close();
+        peers[userID] = null;
+    } 
 })
+
+//Create own Video
+const videoGrid = document.getElementById("video-grid");
+const myVideo = document.getElementById("myVideo");
+myVideo.muted = true;
+
+navigator.getUserMedia(
+    { video: true, audio: true },
+    stream => { 
+        addVideoStream(myVideo, stream);
+
+        //Get video stream
+        peer.on('call', call => {
+            call.answer(stream)
+            const video = document.createElement('video')
+            call.on('stream', userVideoStream => {
+                addVideoStream(video, userVideoStream);
+            })
+            call.on('close', () => {
+                video.remove();
+            })
+        })
+
+        //Send video stream
+        socket.on('user-joined', (userID) => {
+            connectToUser(userID, stream);
+            console.log("user joined: "+userID);
+        })
+    },
+    error => { console.warn(error.message) }
+);
 
 function connectToUser(userID, stream){
     const call = peer.call(userID, stream);
 
-    //Get video stream
     const video = document.createElement("video");
     call.on('stream', userVideoStream => {
         addVideoStream(video, userVideoStream);
@@ -77,7 +78,7 @@ function connectToUser(userID, stream){
     call.on('close', () => {
         video.remove();
     })
-    peers[userID] = call
+    peers[userID] = call;
 }
 
 function addVideoStream(video, stream){
@@ -110,6 +111,7 @@ socket.on('chat-update', chat => {
     console.log(chat);
 })
 
+//Share URL
 function copyURL(){
     var chatLink = document.getElementById("chat-link");
     chatLink.value = window.location.origin + "/room/" + roomID;
